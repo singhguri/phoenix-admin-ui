@@ -3,17 +3,26 @@ const AddTask = (props) => {
     <div>
       <h1>Add Task</h1>
       <form>
-        <div class="form-group">
+        <div className="form-group">
           <label for="Taskname">Task Name</label>
-          <input type="text" class="form-control" id="Taskname" placeholder="Add youre task here"/>
+          <input
+            type="text"
+            className="form-control"
+            id="Taskname"
+            placeholder="Add your task here"
+          />
         </div>
-        <div class="form-group">
+        <div className="form-group">
           <label for="Description of the task">Task Description</label>
-          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          <textarea
+            className="form-control"
+            id="exampleFormControlTextarea1"
+            rows="3"
+          ></textarea>
         </div>
-        <div class="form-group">
+        <div className="form-group">
           <label for="exampleFormControlSelect1">Duration in Seconds</label>
-          <select class="form-control" id="exampleFormControlSelect1">
+          <select className="form-control" id="exampleFormControlSelect1">
             <option>30</option>
             <option>35</option>
             <option>40</option>
@@ -23,23 +32,16 @@ const AddTask = (props) => {
             <option>60</option>
           </select>
         </div>
-        <div class="d-grid gap-2 col-6 mx-auto">
-          <button type="button" class="btn btn-primary">Submit</button>
-          <button type="button" class="btn btn-danger">Cancel</button>
-
+        <div className="d-grid gap-2 col-6 mx-auto">
+          <button type="button" className="btn btn-primary">
+            Submit
+          </button>
+          <button type="button" className="btn btn-danger">
+            Cancel
+          </button>
         </div>
-          
-
-        
-        
-        
-        
       </form>
-
-
     </div>
-    
-
   );
 };
 
