@@ -1,89 +1,88 @@
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { deleteOAuthUsers, getAllOAuthUsers } from "../services/userService";
+
 const UserList = (props) => {
+  let history = useHistory();
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    getAllOAuthUsers()
+      .then((res) => {
+        console.log(res);
+        if (res)
+          if (res.data.status) {
+            setUsers(res.data.message);
+            localStorage.removeItem("userId");
+          }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleEdit = (id) => {
+    localStorage.setItem("userId", id);
+    history.replace("/addUser");
+  };
+
+  const handleDelete = async (id) => {
+    await deleteOAuthUsers(id)
+      .then((res) => {
+        if (res.data.status) {
+          setUsers(users.filter((user) => user.id !== id));
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div>
-      
       <h1>User List</h1>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover">
+      <table className="table">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">User Name</th>
-            <th scope="col">Designation</th>
-            <th scope="col">Eamil</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created On</th>
+            <th scope="col">Status</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody class="table">
-          <tr>
-            <th scope="row">1</th>
-            <td>MarkOtto</td>
-            <td>
-                <select class="form-select" aria-label="Default select example">
-                  <option selected>Select user type</option>
-                  <option value="1">Admin</option>
-                  <option value="2">User</option>
-                </select>
-            </td>
-            <td>@mdo</td>
-            <td>
-                <a href="#" class="view" title="View" data-toggle="tooltip"><i class="fa fa-eye"></i></a>
-                <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="fa fa-edit"></i></a>
-                <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
-            </td>
-            
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
+        <tbody className="table">
+          {users.map((user, index) => (
+            <tr key={user.id}>
+              <th>{index + 1}</th>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>{user.createdAt.replace("T", " ").split(".")[0]}</td>
               <td>
-                <select class="form-select" aria-label="Default select example">
-                <option selected>Select user type</option>
-                <option value="1">Admin</option>
-                <option value="2">User</option>
-                </select>
+                {user.isActive ? (
+                  <span className="badge text-bg-success">Active</span>
+                ) : (
+                  <span className="badge text-bg-danger">In-Active</span>
+                )}
               </td>
-            <td>@fat</td>
-            <td>
-                <a href="#" class="view" title="View" data-toggle="tooltip"><i class="fa fa-eye"></i></a>
-                <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="fa fa-edit"></i></a>
-                <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td >Larry  Bird</td>
-            <td>
-              <select class="form-select" aria-label="Default select example">
-                <option selected>Select user type</option>
-                <option value="1">Admin</option>
-                <option value="2">User</option>
-              </select>
-            </td>
-             
-            <td>@twitter</td>
-            
-            <td>
-                <a href="#" class="view" title="View" data-toggle="tooltip"><i class="fa fa-eye"></i></a>
-                <a href="#" class="edit" title="Edit" data-toggle="tooltip"><i class="fa fa-edit"></i></a>
-                <a href="#" class="delete" title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
-            </td>
-          </tr>
+              <td style={{ paddingTop: 0 }}>
+                <div className="d-flex">
+                  <button
+                    onClick={() => handleEdit(user.id)}
+                    className="btn btn-primary me-2"
+                  >
+                    <i className="fa fa-edit"></i>
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="btn btn-danger me-2"
+                  >
+                    <i className="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
-        <div class="clearfix">
-          <div class="hint-text">Page <b>1</b> of <b>25</b></div>
-          <ul class="pagination">
-            <li class="page-item"><a href="#" class="page-link">Previous</a></li>
-            <li class="page-item"><a href="#" class="page-link">1</a></li>
-            <li class="page-item"><a href="#" class="page-link">2</a></li>
-            <li class="page-item"><a href="#" class="page-link">3</a></li>
-            <li class="page-item"><a href="#" class="page-link">4</a></li>
-            <li class="page-item"><a href="#" class="page-link">5</a></li>
-            <li class="page-item"><a href="#" class="page-link">Next</a></li>
-          </ul>
-        </div>
-      </div>
     </div>
   );
 };

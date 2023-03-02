@@ -1,42 +1,179 @@
+import { addTask, getTaskById, updateTask } from "../services/taskService";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 const AddTask = (props) => {
+  let history = useHistory();
+  const taskId = localStorage.getItem("taskId");
+
+  const [task, setTask] = useState({});
+
+  const { register, handleSubmit, reset, setValue } = useForm();
+
+  useEffect(() => {
+    if (taskId)
+      // get task from db
+      getTaskById(taskId)
+        .then((res) => {
+          if (res) if (res.data.status) setTask(res.data.message);
+        })
+        .catch((err) => console.log(err));
+  }, [taskId]);
+
+  useEffect(() => {
+    setValue("taskName", task.taskName);
+    setValue("taskDescription", task.taskDesc);
+    setValue("taskTiming", task.taskTiming);
+
+    if (task.taskType === "online") setValue("isOnline", true);
+    else if (task.taskType === "offline") setValue("isOffline", true);
+    else if (task.taskType === "both") {
+      setValue("isOnline", true);
+      setValue("isOffline", true);
+    }
+
+    if (task.taskSize === "big") setValue("isTaskBig", true);
+  });
+
+  const handleTaskFormSubmit = (event) => {
+    // console.log(event);
+    let body = {
+      taskName: event.taskName,
+      taskDesc: event.taskDescription,
+      taskType: event.isOnline
+        ? event.isOffline
+          ? "both"
+          : "online"
+        : event.isOffline
+        ? "offline"
+        : "none",
+      taskTiming: event.taskTiming,
+      taskSize: event.isTaskBig ? "big" : "small",
+    };
+
+    if (taskId) {
+      // update case
+      updateTask(body, taskId)
+        .then((res) => {
+          console.log(res);
+          toast.success("Task updated successfully...");
+          history.replace("/taskList");
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Some error occured...");
+        });
+    } else {
+      // add case
+      addTask(body)
+        .then((res) => {
+          console.log(res);
+          toast.success("Task added successfully...");
+          history.replace("/taskList");
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Some error occured...");
+        });
+    }
+  };
+
   return (
     <div>
       <h1>Add Task</h1>
-      <form>
-        <div className="form-group">
-          <label for="Taskname">Task Name</label>
+      <form className="" onSubmit={handleSubmit(handleTaskFormSubmit)}>
+        <div className="form-group mt-3">
+          <label htmlFor="taskName">Task Name</label>
           <input
             type="text"
             className="form-control"
-            id="Taskname"
-            placeholder="Add your task here"
+            id="taskName"
+            name="taskName"
+            placeholder="Task Name"
+            {...register("taskName")}
           />
         </div>
-        <div className="form-group">
-          <label for="Description of the task">Task Description</label>
+        <div className="form-group mt-3">
+          <label htmlFor="taskDescription">Task Description</label>
           <textarea
             className="form-control"
-            id="exampleFormControlTextarea1"
+            placeholder="Task Description"
+            id="taskDescription"
+            name="taskDescription"
+            {...register("taskDescription")}
             rows="3"
           ></textarea>
         </div>
-        <div className="form-group">
-          <label for="exampleFormControlSelect1">Duration in Seconds</label>
-          <select className="form-control" id="exampleFormControlSelect1">
-            <option>30</option>
-            <option>35</option>
-            <option>40</option>
-            <option>45</option>
-            <option>50</option>
-            <option>55</option>
-            <option>60</option>
-          </select>
+        <div className="form-group mt-3">
+          <label htmlFor="taskTiming">Duration in seconds</label>
+          <input
+            className="form-control"
+            type="number"
+            id="taskTiming"
+            name="taskTiming"
+            {...register("taskTiming")}
+          />
         </div>
-        <div className="d-grid gap-2 col-6 mx-auto">
-          <button type="button" className="btn btn-primary">
-            Submit
+        <div className="form-group mt-3">
+          <label>Task type</label>
+          <div className="d-flex">
+            <div className="form-check form-switch me-2">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="isOnline"
+                name="isOnline"
+                {...register("isOnline")}
+              />
+              <label className="form-check-label" htmlFor="isOnline">
+                Online
+              </label>
+            </div>
+            <div className="form-check form-switch">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="isOffline"
+                name="isOffline"
+                {...register("isOffline")}
+              />
+              <label className="form-check-label" htmlFor="isOffline">
+                Offline
+              </label>
+            </div>
+          </div>
+        </div>
+        <div className="form-group mt-3">
+          <label>Task Size</label>
+          <div className="d-flex">
+            <div className="form-check form-switch me-2">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="isTaskBig"
+                name="isTaskBig"
+                {...register("isTaskBig")}
+              />
+              <label className="form-check-label" htmlFor="isTaskBig">
+                Big
+              </label>
+            </div>
+          </div>
+        </div>
+        <div className="d-flex col-6 mt-3">
+          <button type="submit" className="btn btn-primary w-50 me-2">
+            {taskId ? "Update" : "Submit"}
           </button>
-          <button type="button" className="btn btn-danger">
+          <button
+            onClick={() => reset()}
+            type="button"
+            className="btn btn-danger w-50"
+          >
             Cancel
           </button>
         </div>

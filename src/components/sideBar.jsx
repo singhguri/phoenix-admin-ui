@@ -1,8 +1,29 @@
+import { useState } from "react";
+
 const SideBar = (props) => {
+  // eslint-disable-next-line
+  const [sidebarItems, setSidebarItems] = useState([
+    {
+      link: "/dashboard",
+      text: "Dashboard",
+      isActive: true,
+    },
+    {
+      link: "/userList",
+      text: "Users",
+      isActive: false,
+    },
+    {
+      link: "/taskList",
+      text: "Tasks",
+      isActive: false,
+    },
+  ]);
+
   return (
     <div
       className="d-flex flex-column flex-shrink-0 p-3 bg-light"
-      style={{ width: "280px" }}
+      style={{ width: "280px", height: "100vh" }}
       bis_skin_checked="1"
     >
       <a
@@ -14,30 +35,20 @@ const SideBar = (props) => {
       </a>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
-        <li className="nav-item">
-          <a href="/dashboard" className="nav-link active" aria-current="page">
-            <svg className="bi pe-none me-2" width="16" height="16"></svg>
-            Dashboard
-          </a>
-        </li>
-        <li className="nav-item active">
-          <a href="/userList" className="nav-link link-dark">
-            <svg className="bi pe-none me-2" width="16" height="16"></svg>
-            Users
-          </a>
-        </li>
-        <li>
-          <a href="/taskList" className="nav-link link-dark">
-            <svg className="bi pe-none me-2" width="16" height="16"></svg>
-            Tasks
-          </a>
-        </li>
-        <li>
-          <a href="/addTask" className="nav-link link-dark">
-            <svg className="bi pe-none me-2" width="16" height="16"></svg>
-            Add Task
-          </a>
-        </li>
+        {sidebarItems.map((item, index) => (
+          <li key={index} className="nav-item">
+            <a
+              href={item.link}
+              className={
+                item.isActive ? "nav-link active" : "nav-link link-dark"
+              }
+              aria-current="page"
+            >
+              <svg className="bi pe-none me-2" width="16" height="16"></svg>
+              {item.text}
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   );

@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 import { deleteTaskById, getAllTasks } from "../services/taskService";
+import { useHistory } from "react-router-dom";
 
 const TaskList = (props) => {
+  let history = useHistory();
+
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     getAllTasks()
       .then((res) => {
-        console.log({ res });
-        if (res.data.status) setTasks(res.data.message);
+        if (res) if (res.data.status) setTasks(res.data.message);
       })
       .catch((err) => console.log(err));
   }, []);
 
-  const handleEdit = (id) => {};
+  const handleEdit = (id) => {
+    localStorage.setItem("taskId", id);
+    history.replace("/addTask");
+  };
 
   const handleDelete = async (id) => {
     await deleteTaskById(id)
@@ -25,16 +30,31 @@ const TaskList = (props) => {
       .catch((err) => console.log(err));
   };
 
+  const handleNavigate = () => {
+    localStorage.removeItem("taskId");
+    history.replace("/addTask");
+  };
+
   return (
     <div>
       <h1>Task List</h1>
+      <div className="d-flex justify-content-between align-items-center">
+        <button
+          onClick={handleNavigate}
+          className="btn btn-primary btn-sm"
+          type="button"
+        >
+          Create Task
+        </button>
+      </div>
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">No.</th>
-            <th scope="col">Task</th>
+            <th scope="col">S.No.</th>
+            <th scope="col">Task Name</th>
+            <th scope="col">Task Timing</th>
             <th scope="col">Task Type</th>
-            <th scope="col">Task Timing (in min)</th>
+            <th scope="col">Task Size</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -43,35 +63,31 @@ const TaskList = (props) => {
             <tr key={task._id}>
               <th>{index + 1}</th>
               <td>{task.taskName}</td>
+              <td>{task.taskTiming} sec</td>
               <td>{task.taskType}</td>
-              <td>{task.taskTiming}</td>
+              <td>{task.taskSize}</td>
               <td>
-                <button
-                  type="button"
-                  onClick={() => handleEdit(task._id)}
-                  className="btn btn-info btn-sm me-2"
-                >
-                  <i className="fa fa-pencil me-2" />
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(task._id)}
-                  className="btn btn-danger btn-sm"
-                >
-                  <i className="fa fa-trash me-2" />
-                  Delete
-                </button>
+                <div className="d-flex">
+                  <button
+                    type="button"
+                    onClick={() => handleEdit(task._id)}
+                    className="btn btn-info btn-sm me-2"
+                  >
+                    <i className="fa fa-edit" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(task._id)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    <i className="fa fa-trash" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <div className="d-grid gap-2 d-md-block">
-        <button className="btn btn-primary btn-sm" type="button">
-          Create Task
-        </button>
-      </div>
     </div>
   );
 };
