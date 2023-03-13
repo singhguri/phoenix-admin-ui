@@ -72,7 +72,7 @@ const UserList = (props) => {
                     <i className="fa fa-edit"></i>
                   </button>
                   <button
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(user.id)}
                     className="btn btn-danger me-2"
                   >
                     <i className="fa fa-trash"></i>
