@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const SideBar = (props) => {
   // eslint-disable-next-line
@@ -20,6 +20,24 @@ const SideBar = (props) => {
     },
   ]);
 
+  // useEffect(() => {
+  // //   // localStorage.setItem("activeItem", sidebarItems.find({ isActive: true }));
+  // //   console.log(sidebarItems.);
+  // // }, [sidebarItems]);
+
+  // // const handleClick = (link) => {
+  // //   const curActive = localStorage.getItem("activeItem");
+
+  // //   // curItems.foreach((item, index) => {
+  // //   //   console.log(item);
+  // //   //   item.isActive = item.link === link;
+  // //   // });
+  // //   // localStorage.setItem("sideBarItems", curItems);
+
+  // //   // setSidebarItems(curItems);
+  // //   console.log(curActive);
+  // };
+
   return (
     <div
       className="d-flex flex-column flex-shrink-0 p-3 bg-light"
@@ -36,9 +54,13 @@ const SideBar = (props) => {
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
         {sidebarItems.map((item, index) => (
-          <li key={index} className="nav-item">
+          <li
+            key={index}
+            className="nav-item"
+            onClick={() => handleClick(item.link)}
+          >
             <a
-              href={item.link}
+              href="#"
               className={
                 item.isActive ? "nav-link active" : "nav-link link-dark"
               }

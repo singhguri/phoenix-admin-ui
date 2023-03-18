@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { deleteTaskById, getAllTasks } from "../services/taskService";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Base from "./base";
 
 const TaskList = (props) => {
-  let history = useHistory();
+  let history = useNavigate();
 
   const [tasks, setTasks] = useState([]);
 
@@ -17,7 +18,7 @@ const TaskList = (props) => {
 
   const handleEdit = (id) => {
     localStorage.setItem("taskId", id);
-    history.replace("/addTask");
+    history("/addTask");
   };
 
   const handleDelete = async (id) => {
@@ -32,12 +33,11 @@ const TaskList = (props) => {
 
   const handleNavigate = () => {
     localStorage.removeItem("taskId");
-    history.replace("/addTask");
+    history("/addTask");
   };
 
   return (
-    <div>
-      <h1>Task List</h1>
+    <Base title="Tasks" description="">
       <div className="d-flex justify-content-between align-items-center">
         <button
           onClick={handleNavigate}
@@ -47,11 +47,12 @@ const TaskList = (props) => {
           Create Task
         </button>
       </div>
-      <table className="table">
+      <table className="table text-light">
         <thead>
           <tr>
             <th scope="col">S.No.</th>
             <th scope="col">Task Name</th>
+            <th scope="col">Task Language</th>
             <th scope="col">Task Timing</th>
             <th scope="col">Task Type</th>
             <th scope="col">Task Size</th>
@@ -63,6 +64,7 @@ const TaskList = (props) => {
             <tr key={task._id}>
               <th>{index + 1}</th>
               <td>{task.taskName}</td>
+              <td>{task.lang === "en" ? "English" : "French"}</td>
               <td>{task.taskTiming} sec</td>
               <td>{task.taskType}</td>
               <td>{task.taskSize}</td>
@@ -88,7 +90,7 @@ const TaskList = (props) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </Base>
   );
 };
 

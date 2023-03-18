@@ -1,11 +1,15 @@
 import { addTask, getTaskById, updateTask } from "../services/taskService";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Base from "./base";
+import { isAuthenticated } from "../auth/helper";
 
 const AddTask = (props) => {
-  let history = useHistory();
+  const user = isAuthenticated();
+
+  let history = useNavigate();
   const taskId = localStorage.getItem("taskId");
 
   const [task, setTask] = useState({});
@@ -51,6 +55,7 @@ const AddTask = (props) => {
         : "none",
       taskTiming: event.taskTiming,
       taskSize: event.isTaskBig ? "big" : "small",
+      taskAddUserId: user.data.id,
     };
 
     if (taskId) {
@@ -59,7 +64,7 @@ const AddTask = (props) => {
         .then((res) => {
           console.log(res);
           toast.success("Task updated successfully...");
-          history.replace("/taskList");
+          history("/taskList");
         })
         .catch((err) => {
           console.log(err);
@@ -71,7 +76,7 @@ const AddTask = (props) => {
         .then((res) => {
           console.log(res);
           toast.success("Task added successfully...");
-          history.replace("/taskList");
+          history("/taskList");
         })
         .catch((err) => {
           console.log(err);
@@ -81,9 +86,8 @@ const AddTask = (props) => {
   };
 
   return (
-    <div>
-      <h1>Add Task</h1>
-      <form className="" onSubmit={handleSubmit(handleTaskFormSubmit)}>
+    <Base title="Add Task" description="">
+      <form className="w-50" onSubmit={handleSubmit(handleTaskFormSubmit)}>
         <div className="form-group mt-3">
           <label htmlFor="taskName">Task Name</label>
           <input
@@ -178,7 +182,7 @@ const AddTask = (props) => {
           </button>
         </div>
       </form>
-    </div>
+    </Base>
   );
 };
 

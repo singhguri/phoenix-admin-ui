@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { deleteOAuthUsers, getAllOAuthUsers } from "../services/userService";
+import { useNavigate } from "react-router-dom";
+import { deleteOAuthUsers } from "../services/userService";
+import { toast } from "react-toastify";
+import Base from "./base";
+import { getAllAdminUsers } from "../services/adminUserService";
 
 const UserList = (props) => {
-  let history = useHistory();
+  let history = useNavigate();
 
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    getAllOAuthUsers()
+    getAllAdminUsers()
       .then((res) => {
         console.log(res);
         if (res)
           if (res.data.status) {
             setUsers(res.data.message);
-            localStorage.removeItem("userId");
           }
       })
       .catch((err) => console.log(err));
@@ -22,7 +24,7 @@ const UserList = (props) => {
 
   const handleEdit = (id) => {
     localStorage.setItem("userId", id);
-    history.replace("/addUser");
+    history("/addUser");
   };
 
   const handleDelete = async (id) => {
@@ -30,31 +32,53 @@ const UserList = (props) => {
       .then((res) => {
         if (res.data.status) {
           setUsers(users.filter((user) => user.id !== id));
+          toast.success("User deleted successfully...");
         }
       })
       .catch((err) => console.log(err));
   };
 
+  const handleNavigate = () => {
+    localStorage.removeItem("userId");
+    history("/addUser");
+  };
+
   return (
-    <div>
-      <h1>User List</h1>
-      <table className="table">
+    <Base title="Users" description="">
+      <div className="d-flex justify-content-between align-items-center">
+        <button
+          onClick={handleNavigate}
+          className="btn btn-primary btn-sm"
+          type="button"
+        >
+          Create User
+        </button>
+      </div>
+      <table className="table text-light">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">User Name</th>
             <th scope="col">Email</th>
+            <th scope="col">Role</th>
             <th scope="col">Created On</th>
             <th scope="col">Status</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody className="table">
+        <tbody>
           {users.map((user, index) => (
             <tr key={user.id}>
               <th>{index + 1}</th>
-              <td>{user.name}</td>
+              <td>{user.userName}</td>
               <td>{user.email}</td>
+              <td>
+                {user.isAdminUser
+                  ? user.role === 1
+                    ? "Super Admin"
+                    : "Client"
+                  : "Game User"}
+              </td>
               <td>{user.createdAt.replace("T", " ").split(".")[0]}</td>
               <td>
                 {user.isActive ? (
@@ -66,6 +90,7 @@ const UserList = (props) => {
               <td style={{ paddingTop: 0 }}>
                 <div className="d-flex">
                   <button
+                    style={{ display: "none" }}
                     onClick={() => handleEdit(user.id)}
                     className="btn btn-primary me-2"
                   >
@@ -83,7 +108,7 @@ const UserList = (props) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </Base>
   );
 };
 

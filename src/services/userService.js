@@ -40,3 +40,11 @@ export const deleteOAuthUsers = async (id) => {
     console.log(error);
   }
 };
+
+export const login = async (body) => {
+  try {
+    return await axios.post(BASE_URL + "/login", body);
+  } catch (error) {
+    console.log(error);
+  }
+};

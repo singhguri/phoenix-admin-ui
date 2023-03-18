@@ -10,6 +10,7 @@ import AddTask from "./components/addTask";
 import SideBar from "./components/sideBar";
 import NavBar from "./components/navBar";
 import AddUser from "./components/addUser";
+import Login from "./components/login";
 
 function App() {
   return (
@@ -24,13 +25,14 @@ function App() {
         {/* routing container */}
         <div className="container">
           <Switch>
+            <Route path="/login" component={Login} />
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/userList" component={UserList} />
             <Route path="/taskList" component={TaskList} />
             <Route path="/addTask" component={AddTask} />
             <Route path="/addUser" component={AddUser} />
             <Route path="/not-found" component={NotFound} />
-            <Redirect from="/" exact to="/dashboard" />
+            <Redirect from="/" exact to="/login" />
             <Redirect to="/not-found" />
           </Switch>
         </div>

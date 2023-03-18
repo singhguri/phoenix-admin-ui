@@ -1,15 +1,14 @@
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  AddOAuthUsers,
-  getAllOAuthUserById,
-  updateOAuthUsers,
-} from "../services/userService";
+import { getAllOAuthUserById } from "../services/userService";
+import Base from "./base";
+import { RandomPassword } from "../utils/genPassword";
+import { addAdminUser } from "../services/adminUserService";
 
 const AddUser = (props) => {
-  let history = useHistory();
+  let history = useNavigate();
   const userId = localStorage.getItem("userId");
 
   const [user, setUser] = useState({});
@@ -36,114 +35,115 @@ const AddUser = (props) => {
   const handleUserFormSubmit = (event) => {
     // console.log(event);
     let body = {
-      userName: event.userName,
-      userDesc: event.userDescription,
-      userType: event.isOnline
-        ? event.isOffline
-          ? "both"
-          : "online"
-        : event.isOffline
-        ? "offline"
-        : "none",
-      userTiming: event.userTiming,
-      userSize: event.isUserBig ? "big" : "small",
+      id: RandomPassword(16),
+      name: event.name,
+      userName: event.email,
+      family_name: event.name,
+      given_name: event.name,
+      email: event.email,
+      password: event.password,
+      isAdminUser: true,
+      verified_email: true,
+      role: event.isAdmin ? 1 : 2,
     };
 
-    if (userId) {
-      // update case
-      updateOAuthUsers(body, userId)
-        .then((res) => {
-          console.log(res);
-          toast.success("User updated successfully...");
-          history.replace("/userList");
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Some error occured...");
-        });
-    } else {
-      // add case
-      AddOAuthUsers(body)
-        .then((res) => {
-          console.log(res);
-          toast.success("User added successfully...");
-          history.replace("/userList");
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Some error occured...");
-        });
-    }
+    console.log(body);
+
+    // if (userId) {
+    //   // update case
+    //   updateOAuthUsers(body, userId)
+    //     .then((res) => {
+    //       console.log(res);
+    //       toast.success("User updated successfully...");
+    //       history("/userList");
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       toast.error("Some error occured...");
+    //     });
+    // } else {
+    // add case
+    addAdminUser(body)
+      .then((res) => {
+        console.log(res);
+        toast.success("User added successfully...");
+        history("/userList");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Some error occured...");
+      });
+    // }
+  };
+
+  const genRandomPassword = () => {
+    setValue("password", RandomPassword(8));
   };
 
   return (
-    <div>
-      <h1>Add User</h1>
-      <form className="" onSubmit={handleSubmit(handleUserFormSubmit)}>
+    <Base title="Add User" description="">
+      <form className="w-50" onSubmit={handleSubmit(handleUserFormSubmit)}>
         <div className="form-group mt-3">
-          <label htmlFor="userName">User Name</label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
             className="form-control"
-            id="userName"
-            name="userName"
-            placeholder="User Name"
-            {...register("userName")}
+            id="name"
+            name="name"
+            placeholder="Name"
+            {...register("name")}
           />
         </div>
         <div className="form-group mt-3">
-          <label htmlFor="userDescription">User Description</label>
-          <textarea
-            className="form-control"
-            placeholder="User Description"
-            id="userDescription"
-            name="userDescription"
-            {...register("userDescription")}
-            rows="3"
-          ></textarea>
-        </div>
-        <div className="form-group mt-3">
-          <label htmlFor="userTiming">Duration in seconds</label>
+          <label htmlFor="email">Email</label>
           <input
             className="form-control"
-            type="number"
-            id="userTiming"
-            name="userTiming"
-            {...register("userTiming")}
+            placeholder="Email"
+            id="email"
+            name="email"
+            type="email"
+            {...register("email")}
           />
         </div>
         <div className="form-group mt-3">
-          <label>User type</label>
+          <label htmlFor="password">Password</label>
+          <div className="row">
+            <div className="col-md-6">
+              <input
+                className="form-control"
+                type="text"
+                id="password"
+                name="password"
+                placeholder="Password"
+                {...register("password")}
+              />
+            </div>
+            <div className="col-md-6">
+              <span className="btn btn-success" onClick={genRandomPassword}>
+                Generate Password
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="form-group mt-3">
+          <label>User Role</label>
           <div className="d-flex">
             <div className="form-check form-switch me-2">
               <input
                 className="form-check-input"
                 type="checkbox"
                 role="switch"
-                id="isOnline"
-                name="isOnline"
-                {...register("isOnline")}
+                id="isAdmin"
+                name="isAdmin"
+                {...register("isAdmin")}
               />
-              <label className="form-check-label" htmlFor="isOnline">
-                Online
-              </label>
-            </div>
-            <div className="form-check form-switch">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="isOffline"
-                name="isOffline"
-                {...register("isOffline")}
-              />
-              <label className="form-check-label" htmlFor="isOffline">
-                Offline
+              <label className="form-check-label" htmlFor="isAdmin">
+                Admin
               </label>
             </div>
           </div>
         </div>
-        <div className="form-group mt-3">
+        {/* <div className="form-group mt-3">
           <label>User Size</label>
           <div className="d-flex">
             <div className="form-check form-switch me-2">
@@ -160,7 +160,7 @@ const AddUser = (props) => {
               </label>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="d-flex col-6 mt-3">
           <button type="submit" className="btn btn-primary w-50 me-2">
             {userId ? "Update" : "Submit"}
@@ -174,7 +174,7 @@ const AddUser = (props) => {
           </button>
         </div>
       </form>
-    </div>
+    </Base>
   );
 };
 
