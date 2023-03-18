@@ -10,7 +10,7 @@ const Dashboard = (props) => {
       title="Admin Dashboard"
       description={"Welcome " + titleCase(user.data.name)}
     >
-      <div className="row ">
+      {/* <div className="row ">
         <div className="col-md-6">
           <div className="card text-bg-primary mb-3 ">
             <div className="card-header">Total User</div>
@@ -49,14 +49,13 @@ const Dashboard = (props) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> 
       <div className="row">
         <div className="col-md-6">
           <div className="card text-bg-warning mb-3">
             <div className="card-header">Tasks</div>
             <div className="card-body">
-              <h5 className="card-title">Total Tasks Created</h5>
-              <p className="card-text">100</p>
+              <h5 className="card-title">Total Tasks: 100</h5>
             </div>
           </div>
         </div>
@@ -93,7 +92,7 @@ const Dashboard = (props) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </Base>
   );
 };

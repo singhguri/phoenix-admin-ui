@@ -11,7 +11,11 @@ const TaskList = (props) => {
   useEffect(() => {
     getAllTasks()
       .then((res) => {
-        if (res) if (res.data.status) setTasks(res.data.message);
+        if (res)
+          if (res.data.status) {
+            const data = res.data.message;
+            setTasks(data.filter((d) => d.lang === "en"));
+          }
       })
       .catch((err) => console.log(err));
   }, []);

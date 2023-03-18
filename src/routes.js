@@ -4,6 +4,7 @@ import {
   Routes as RRDRoutes,
 } from "react-router-dom";
 import AdminRoute from "./auth/helper/adminRoutes";
+import ClientRoute from "./auth/helper/clientRoutes";
 import AddTask from "./components/addTask";
 import AddUser from "./components/addUser";
 import ClientDashboard from "./components/clientDashboard";
@@ -28,15 +29,6 @@ const Routes = () => {
               </AdminRoute>
             }
           />
-
-          <Route
-            path="/addUser"
-            element={
-              <AdminRoute>
-                <AddUser />
-              </AdminRoute>
-            }
-          />
           <Route
             path="/admin/dashboard"
             element={
@@ -54,14 +46,6 @@ const Routes = () => {
             }
           />
           <Route
-            path="/taskList"
-            element={
-              <AdminRoute>
-                <TaskList />
-              </AdminRoute>
-            }
-          />
-          <Route
             path="/addTask"
             element={
               <AdminRoute>
@@ -70,9 +54,34 @@ const Routes = () => {
             }
           />
 
+          <Route
+            path="/dashboard"
+            element={
+              <ClientRoute>
+                <ClientDashboard />
+              </ClientRoute>
+            }
+          />
+
+          <Route
+            path="/taskList"
+            element={
+              <ClientRoute>
+                <TaskList />
+              </ClientRoute>
+            }
+          />
+
+          <Route
+            path="/not-found"
+            element={
+              <ClientRoute>
+                <NotFound />
+              </ClientRoute>
+            }
+          />
+
           <Route path="/" exact Component={Login} />
-          <Route path="/dashboard" exact Component={ClientDashboard} />
-          <Route path="/not-found" exact Component={NotFound} />
         </RRDRoutes>
       </Router>
     </>
