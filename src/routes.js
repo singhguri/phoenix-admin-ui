@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Routes as RRDRoutes,
 } from "react-router-dom";
+import AdminRoute from "./auth/helper/adminRoutes";
 import AddTask from "./components/addTask";
 import AddUser from "./components/addUser";
 import ClientDashboard from "./components/clientDashboard";
@@ -18,23 +19,60 @@ const Routes = () => {
     <>
       <Router>
         <RRDRoutes>
-          {/* <AdminRoute path="/login" exact component={Login} />
-      
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/taskList" component={TaskList} />
-      <Route path="/addTask" component={AddTask} />
-    <Route path="/not-found" component={NotFound} /> */}
+          <Route
+            exact
+            path="/addUser"
+            element={
+              <AdminRoute>
+                <AddUser />
+              </AdminRoute>
+            }
+          />
 
-          <Route path="/" Component={Login} />
-          <Route path="/addUser" exact Component={AddUser} />
-          <Route path="/admin/dashboard" exact Component={Dashboard} />
+          <Route
+            path="/addUser"
+            element={
+              <AdminRoute>
+                <AddUser />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/userList"
+            element={
+              <AdminRoute>
+                <UserList />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/taskList"
+            element={
+              <AdminRoute>
+                <TaskList />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/addTask"
+            element={
+              <AdminRoute>
+                <AddTask />
+              </AdminRoute>
+            }
+          />
+
+          <Route path="/" exact Component={Login} />
           <Route path="/dashboard" exact Component={ClientDashboard} />
-          <Route path="/userList" exact Component={UserList} />
-          <Route path="/taskList" exact Component={TaskList} />
-          <Route path="/addTask" exact Component={AddTask} />
           <Route path="/not-found" exact Component={NotFound} />
-          {/* <Redirect from="/" exact to="/login" /> */}
-          {/* <Redirect to="/not-found" /> */}
         </RRDRoutes>
       </Router>
     </>

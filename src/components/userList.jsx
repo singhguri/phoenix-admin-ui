@@ -4,13 +4,18 @@ import { deleteOAuthUsers } from "../services/userService";
 import { toast } from "react-toastify";
 import Base from "./base";
 import { getAllAdminUsers } from "../services/adminUserService";
+import { isAuthenticated } from "../auth/helper";
+import { Roles } from "../constants/constants";
 
 const UserList = (props) => {
   let history = useNavigate();
-
   const [users, setUsers] = useState([]);
 
+  const user = isAuthenticated();
+
   useEffect(() => {
+    if (!user || user.data.role !== Roles.ADMIN) history("/");
+
     getAllAdminUsers()
       .then((res) => {
         console.log(res);
@@ -20,7 +25,7 @@ const UserList = (props) => {
           }
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [history, user]);
 
   const handleEdit = (id) => {
     localStorage.setItem("userId", id);
