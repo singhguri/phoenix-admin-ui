@@ -48,9 +48,9 @@ const Routes = () => {
           <Route
             path="/addTask"
             element={
-              <AdminRoute>
+              <ClientRoute>
                 <AddTask />
-              </AdminRoute>
+              </ClientRoute>
             }
           />
 

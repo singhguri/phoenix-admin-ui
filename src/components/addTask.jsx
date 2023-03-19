@@ -31,12 +31,12 @@ const AddTask = (props) => {
     setValue("taskDescription", task.taskDesc);
     setValue("taskTiming", task.taskTiming);
 
-    if (task.taskType === "online") setValue("isOnline", true);
-    else if (task.taskType === "offline") setValue("isOffline", true);
-    else if (task.taskType === "both") {
-      setValue("isOnline", true);
-      setValue("isOffline", true);
-    }
+    // if (task.taskType === "online") setValue("isOnline", true);
+    // else if (task.taskType === "offline") setValue("isOffline", true);
+    // else if (task.taskType === "both") {
+    //   setValue("isOnline", true);
+    //   setValue("isOffline", true);
+    // }
 
     if (task.taskSize === "big") setValue("isTaskBig", true);
   });
@@ -46,13 +46,13 @@ const AddTask = (props) => {
     let body = {
       taskName: event.taskName,
       taskDesc: event.taskDescription,
-      taskType: event.isOnline
-        ? event.isOffline
-          ? "both"
-          : "online"
-        : event.isOffline
-        ? "offline"
-        : "none",
+      taskType: "both",
+      // ? event.isOffline
+      //   ? "both"
+      //   : "online"
+      // : event.isOffline
+      // ? "offline"
+      // : "none",
       taskTiming: event.taskTiming,
       taskSize: event.isTaskBig ? "big" : "small",
       taskAddUserId: user.data.id,
@@ -83,6 +83,11 @@ const AddTask = (props) => {
           toast.error("Some error occured...");
         });
     }
+  };
+
+  const cancelForm = () => {
+    reset();
+    history("/taskList");
   };
 
   return (
@@ -117,10 +122,11 @@ const AddTask = (props) => {
             type="number"
             id="taskTiming"
             name="taskTiming"
+            placeholder="Duration"
             {...register("taskTiming")}
           />
         </div>
-        <div className="form-group mt-3">
+        {/* <div className="form-group mt-3">
           <label>Task type</label>
           <div className="d-flex">
             <div className="form-check form-switch me-2">
@@ -150,7 +156,7 @@ const AddTask = (props) => {
               </label>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="form-group mt-3">
           <label>Task Size</label>
           <div className="d-flex">
@@ -174,7 +180,7 @@ const AddTask = (props) => {
             {taskId ? "Update" : "Submit"}
           </button>
           <button
-            onClick={() => reset()}
+            onClick={cancelForm}
             type="button"
             className="btn btn-danger w-50"
           >
