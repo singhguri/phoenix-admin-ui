@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { deleteTaskById, getAllTasks } from "../services/taskService";
+import {
+  deleteFrTaskById,
+  deleteTaskById,
+  getAllTasks,
+} from "../services/taskService";
 import { useNavigate } from "react-router-dom";
 import Base from "./base";
 
@@ -14,6 +18,7 @@ const TaskList = (props) => {
         if (res)
           if (res.data.status) {
             const data = res.data.message;
+            // setTasks(data);
             setTasks(data.filter((d) => d.lang === "en"));
           }
       })
@@ -25,14 +30,23 @@ const TaskList = (props) => {
     history("/addTask");
   };
 
-  const handleDelete = async (id) => {
-    await deleteTaskById(id)
-      .then((res) => {
-        if (res.data.status) {
-          setTasks(tasks.filter((task) => task._id !== id));
-        }
-      })
-      .catch((err) => console.log(err));
+  const handleDelete = async (id, lang) => {
+    if (lang === "en")
+      await deleteTaskById(id)
+        .then((res) => {
+          if (res.data.status) {
+            setTasks(tasks.filter((task) => task._id !== id));
+          }
+        })
+        .catch((err) => console.log(err));
+    else if (lang === "fr")
+      await deleteFrTaskById(id)
+        .then((res) => {
+          if (res.data.status) {
+            setTasks(tasks.filter((task) => task._id !== id));
+          }
+        })
+        .catch((err) => console.log(err));
   };
 
   const handleNavigate = () => {
@@ -83,7 +97,7 @@ const TaskList = (props) => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDelete(task._id)}
+                    onClick={() => handleDelete(task._id, task.lang)}
                     className="btn btn-danger btn-sm"
                   >
                     <i className="fa fa-trash" />

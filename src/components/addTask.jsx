@@ -30,13 +30,7 @@ const AddTask = (props) => {
     setValue("taskName", task.taskName);
     setValue("taskDescription", task.taskDesc);
     setValue("taskTiming", task.taskTiming);
-
-    // if (task.taskType === "online") setValue("isOnline", true);
-    // else if (task.taskType === "offline") setValue("isOffline", true);
-    // else if (task.taskType === "both") {
-    //   setValue("isOnline", true);
-    //   setValue("isOffline", true);
-    // }
+    setValue("taskLang", task.lang);
 
     if (task.taskSize === "big") setValue("isTaskBig", true);
   });
@@ -55,6 +49,7 @@ const AddTask = (props) => {
       // : "none",
       taskTiming: event.taskTiming,
       taskSize: event.isTaskBig ? "big" : "small",
+      lang: event.taskLang,
       taskAddUserId: user.data.id,
     };
 
@@ -173,6 +168,38 @@ const AddTask = (props) => {
                 Big
               </label>
             </div>
+          </div>
+        </div>
+        <div className="form-group mt-3">
+          <label>Task Language</label>
+          <div className="d-flex">
+            <select
+              id="taskLang"
+              name="taskLang"
+              {...register("taskLang")}
+              className="form-select"
+              aria-label="Default select example"
+              defaultValue="en"
+            >
+              <option value="en">English</option>
+              <option value="fr">French</option>
+            </select>
+            {/* <div className="form-check form-switch me-2">
+              <label className="form-check-label" htmlFor="taskLang">
+                English
+              </label>
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="taskLang"
+                name="taskLang"
+                {...register("taskLang")}
+              />
+              <label className="form-check-label" htmlFor="taskLang">
+                French
+              </label>
+            </div> */}
           </div>
         </div>
         <div className="d-flex col-6 mt-3">

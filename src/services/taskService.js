@@ -3,7 +3,7 @@ import { BASE_URL } from "../constants/constants";
 
 export const getAllTasks = async () => {
   try {
-    return await axios.get(BASE_URL + "/tasks");
+    return await axios.get(BASE_URL + "/all-tasks");
   } catch (error) {
     console.log(error);
   }
@@ -33,9 +33,22 @@ export const deleteTaskById = async (id) => {
   }
 };
 
+export const deleteFrTaskById = async (id) => {
+  try {
+    return await axios.delete(BASE_URL + "/fr-tasks/" + id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getTaskById = async (id) => {
   try {
-    return await axios.get(BASE_URL + "/tasks/" + id);
+    let task = await axios.get(BASE_URL + "/tasks/" + id);
+
+    if (!task.data.message)
+      task = await axios.get(BASE_URL + "/fr-tasks/" + id);
+
+    return task;
   } catch (error) {
     console.log(error);
   }

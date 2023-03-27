@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { authenticate, isAuthenticated } from "../auth/helper";
 import { Roles } from "../constants/constants";
 import { login } from "../services/userService";
@@ -36,9 +36,7 @@ const Login = (props) => {
       }
     }
 
-    if (isAuthenticated()) {
-      return <Navigate to="/" />;
-    }
+    if (isAuthenticated()) navigate("/");
   };
 
   const loadingMessage = () => {
@@ -66,14 +64,14 @@ const Login = (props) => {
     await login({ email, password })
       .then((data) => {
         console.log({ data });
-        if (data.error) {
-          setValues({ ...values, error: data.error, loading: false });
-        } else {
+        if (data.data.status) {
           const res = data;
           authenticate(res.data, () => {
             setValues({ ...values, didRedirect: true });
           });
           performRedirect();
+        } else {
+          setValues({ ...values, error: data.data.message, loading: false });
         }
       })
       .catch((err) => {
