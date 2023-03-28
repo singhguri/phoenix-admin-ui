@@ -25,7 +25,7 @@ const UserList = (props) => {
           }
       })
       .catch((err) => console.log(err));
-  }, [history, user]);
+  }, []);
 
   const handleEdit = (id) => {
     localStorage.setItem("userId", id);
