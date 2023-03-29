@@ -9,6 +9,26 @@ export const getAllAdminUsers = async () => {
   }
 };
 
+export const deleteAdminUsers = async (id) => {
+  try {
+    return await axios.delete(BASE_URL + "/adminUsers/" + id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteAdminTaskById = async (taskId, userId, lang) => {
+  try {
+    return await axios.post(BASE_URL + "/delete-adminUser-tasks", {
+      taskId,
+      userId,
+      lang,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addAdminUser = async (body) => {
   try {
     return await axios.post(BASE_URL + "/adminUsers", body);

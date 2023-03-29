@@ -3,26 +3,48 @@ import {
   deleteFrTaskById,
   deleteTaskById,
   getAllTasks,
+  getTasksByUser,
 } from "../services/taskService";
 import { useNavigate } from "react-router-dom";
 import Base from "./base";
+import { isAuthenticated } from "../auth/helper";
+import { Roles } from "../constants/constants";
+import { deleteAdminTaskById } from "../services/adminUserService";
 
 const TaskList = (props) => {
   let history = useNavigate();
 
   const [tasks, setTasks] = useState([]);
 
+  const user = isAuthenticated();
+
   useEffect(() => {
-    getAllTasks()
-      .then((res) => {
-        if (res)
-          if (res.data.status) {
-            const data = res.data.message;
-            // setTasks(data);
-            setTasks(data.filter((d) => d.lang === "en"));
-          }
-      })
-      .catch((err) => console.log(err));
+    // console.log(user.data);
+    if (user.data.role === Roles.ADMIN) {
+      // get all tasks
+      getAllTasks()
+        .then((res) => {
+          if (res)
+            if (res.data.status) {
+              const data = res.data.message;
+              // setTasks(data);
+              setTasks(data.filter((d) => d.lang === "en"));
+            }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      // get user based tasks
+      getTasksByUser(user.data.id)
+        .then((res) => {
+          if (res)
+            if (res.data.status) {
+              const data = res.data.message;
+              setTasks(data);
+              // setTasks(data.filter((d) => d.lang === "en"));
+            }
+        })
+        .catch((err) => console.log(err));
+    }
   }, []);
 
   const handleEdit = (id) => {
@@ -31,22 +53,29 @@ const TaskList = (props) => {
   };
 
   const handleDelete = async (id, lang) => {
-    if (lang === "en")
-      await deleteTaskById(id)
-        .then((res) => {
-          if (res.data.status) {
-            setTasks(tasks.filter((task) => task._id !== id));
-          }
-        })
-        .catch((err) => console.log(err));
-    else if (lang === "fr")
-      await deleteFrTaskById(id)
-        .then((res) => {
-          if (res.data.status) {
-            setTasks(tasks.filter((task) => task._id !== id));
-          }
-        })
-        .catch((err) => console.log(err));
+    await deleteAdminTaskById(id, user.data.id, lang)
+      .then((res) => {
+        setTasks(tasks.filter((task) => task._id !== id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // if (lang === "en")
+    // await deleteTaskById(id)
+    //     .then((res) => {
+    //       if (res.data.status) {
+    //         setTasks(tasks.filter((task) => task._id !== id));
+    //       }
+    //     })
+    //     .catch((err) => console.log(err));
+    // else if (lang === "fr")
+    //   await deleteFrTaskById(id)
+    //     .then((res) => {
+    //       if (res.data.status) {
+    //         setTasks(tasks.filter((task) => task._id !== id));
+    //       }
+    //     })
+    //     .catch((err) => console.log(err));
   };
 
   const handleNavigate = () => {

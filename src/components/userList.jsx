@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { deleteOAuthUsers } from "../services/userService";
 import { toast } from "react-toastify";
 import Base from "./base";
-import { getAllAdminUsers } from "../services/adminUserService";
+import {
+  deleteAdminUsers,
+  getAllAdminUsers,
+} from "../services/adminUserService";
 import { isAuthenticated } from "../auth/helper";
 import { Roles } from "../constants/constants";
 
@@ -33,7 +36,7 @@ const UserList = (props) => {
   };
 
   const handleDelete = async (id) => {
-    await deleteOAuthUsers(id)
+    await deleteAdminUsers(id)
       .then((res) => {
         if (res.data.status) {
           setUsers(users.filter((user) => user.id !== id));

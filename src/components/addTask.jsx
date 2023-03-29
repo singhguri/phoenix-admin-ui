@@ -41,12 +41,6 @@ const AddTask = (props) => {
       taskName: event.taskName,
       taskDesc: event.taskDescription,
       taskType: "both",
-      // ? event.isOffline
-      //   ? "both"
-      //   : "online"
-      // : event.isOffline
-      // ? "offline"
-      // : "none",
       taskTiming: event.taskTiming,
       taskSize: event.isTaskBig ? "big" : "small",
       lang: event.taskLang,

@@ -14,7 +14,7 @@ const Settings = (props) => {
       .catch((err) => {
         console.log(err);
       });
-  }, [user.id]);
+  }, []);
 
   return <Base title="Settings"></Base>;
 };

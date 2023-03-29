@@ -57,7 +57,7 @@ const SideBar = (props) => {
           <li
             key={index}
             className="nav-item"
-            onClick={() => handleClick(item.link)}
+            // onClick={() => handleClick(item.link)}
           >
             <a
               href="#"

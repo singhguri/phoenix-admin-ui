@@ -9,6 +9,14 @@ export const getAllTasks = async () => {
   }
 };
 
+export const getTasksByUser = async (userId) => {
+  try {
+    return await axios.get(BASE_URL + "/user-tasks/" + userId);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addTask = async (body) => {
   try {
     return await axios.post(BASE_URL + "/tasks", body);
@@ -19,7 +27,9 @@ export const addTask = async (body) => {
 
 export const updateTask = async (body, id) => {
   try {
-    return await axios.put(BASE_URL + "/tasks/" + id, body);
+    if (body.lang === "en")
+      return await axios.put(BASE_URL + "/tasks/" + id, body);
+    return await axios.put(BASE_URL + "/fr-tasks/" + id, body);
   } catch (error) {
     console.log(error);
   }
