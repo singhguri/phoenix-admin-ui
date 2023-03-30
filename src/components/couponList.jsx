@@ -1,49 +1,38 @@
 import { useEffect, useState } from "react";
-import { getTasksByUser } from "../services/taskService";
 import { useNavigate } from "react-router-dom";
+import { deleteCoupon, getAllCoupons } from "../services/couponService";
 import Base from "./base";
-import { isAuthenticated } from "../auth/helper";
-import { deleteAdminTaskById } from "../services/adminUserService";
 import Loading from "./loader";
 
-const TaskList = (props) => {
+const CouponList = (props) => {
   let history = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [allTasks, setAllTasks] = useState([]);
+  const [coupons, setCoupons] = useState([]);
+  const [allCoupons, setAllCoupons] = useState([]);
 
-  const [tasks, setTasks] = useState([]);
-  const [taskLang, setTaskLang] = useState("en");
-
-  const user = isAuthenticated();
+  const [couponLang, setCouponLang] = useState("en");
 
   useEffect(() => {
-    // get user based tasks
     setIsLoading(true);
-    getTasksByUser(user.data.id)
+    getAllCoupons()
       .then((res) => {
         if (res)
           if (res.data.status) {
             const data = res.data.message;
-            setAllTasks(data);
-            setTasks(data.filter((d) => d.lang === taskLang));
+            setAllCoupons(data);
+            setCoupons(data.filter((coupon) => coupon.lang === couponLang));
             setIsLoading(false);
           }
       })
       .catch((err) => console.log(err));
   }, []);
 
-  const handleEdit = (id) => {
-    localStorage.setItem("taskId", id);
-    localStorage.setItem("taskLang", taskLang);
-    history("/addTask");
-  };
-
   const handleDelete = async (id, lang) => {
-    await deleteAdminTaskById(id, user.data.id, lang)
+    await deleteCoupon(id, lang)
       .then((res) => {
-        setTasks(tasks.filter((task) => task._id !== id));
+        setCoupons(coupons.filter((coupon) => coupon._id !== id));
       })
       .catch((err) => {
         console.log(err);
@@ -51,17 +40,16 @@ const TaskList = (props) => {
   };
 
   const handleNavigate = () => {
-    localStorage.removeItem("taskId");
-    history("/addTask");
+    history("/addCoupon");
   };
 
-  const toggleTaskLang = (taskLang) => {
-    setTaskLang(taskLang);
-    setTasks(allTasks.filter((d) => d.lang === taskLang));
+  const toggleCouponLang = (couponLang) => {
+    setCouponLang(couponLang);
+    setCoupons(allCoupons.filter((d) => d.lang === couponLang));
   };
 
   return (
-    <Base title="Tasks" description="">
+    <Base title="Coupons" description="">
       <Loading isLoading={isLoading} />
       <div className="d-flex justify-content-between align-items-center mb-3">
         <button
@@ -69,24 +57,28 @@ const TaskList = (props) => {
           className="btn btn-primary btn-sm"
           type="button"
         >
-          Create Task
+          Create Coupon
         </button>
       </div>
       <div className="d-flex justify-content-between align-items-center">
         <ul className="nav">
           <li className="nav-item me-2">
-            <span className={`me-2`}>Tasks:</span>
+            <span className={`me-2`}>Coupons:</span>
           </li>
-          <li className="nav-item me-2" onClick={() => toggleTaskLang("en")}>
+          <li className="nav-item me-2" onClick={() => toggleCouponLang("en")}>
             <span
-              className={`clickable ${taskLang === "en" ? "text-primary" : ""}`}
+              className={`clickable ${
+                couponLang === "en" ? "text-primary" : ""
+              }`}
             >
               English
             </span>
           </li>
-          <li className="nav-item" onClick={() => toggleTaskLang("fr")}>
+          <li className="nav-item" onClick={() => toggleCouponLang("fr")}>
             <span
-              className={`clickable ${taskLang === "fr" ? "text-primary" : ""}`}
+              className={`clickable ${
+                couponLang === "fr" ? "text-primary" : ""
+              }`}
             >
               French
             </span>
@@ -97,35 +89,36 @@ const TaskList = (props) => {
         <thead>
           <tr>
             <th scope="col">S.No.</th>
-            <th scope="col">Task Name</th>
-            <th scope="col">Task Language</th>
-            <th scope="col">Task Timing</th>
-            <th scope="col">Task Type</th>
-            <th scope="col">Task Size</th>
+            <th scope="col">Coupon Name</th>
+            <th scope="col">Current Users Count</th>
+            <th scope="col">Max Users Count</th>
+            <th scope="col">Price</th>
             <th scope="col">Action</th>
+            {/* <th scope="col">Coupon Language</th> */}
+            {/* <th scope="col">Task Type</th>
+            <th scope="col">Task Size</th> */}
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {tasks.map((task, index) => (
-            <tr key={task._id}>
+          {coupons.map((coupon, index) => (
+            <tr key={coupon._id}>
               <th>{index + 1}</th>
-              <td>{task.taskName}</td>
-              <td>{task.lang === "en" ? "English" : "French"}</td>
-              <td>{task.taskTiming} sec</td>
-              <td>{task.taskType}</td>
-              <td>{task.taskSize}</td>
+              <td>{coupon.name}</td>
+              <td>{coupon.usersCount}</td>
+              <td>{coupon.maxUsersCount}</td>
+              <td>{coupon.price}</td>
               <td>
                 <div className="d-flex">
-                  <button
+                  {/* <button
                     type="button"
                     onClick={() => handleEdit(task._id)}
                     className="btn btn-info btn-sm me-2"
                   >
                     <i className="fa fa-edit" />
-                  </button>
+                  </button> */}
                   <button
                     type="button"
-                    onClick={() => handleDelete(task._id, task.lang)}
+                    onClick={() => handleDelete(coupon._id, coupon.lang)}
                     className="btn btn-danger btn-sm"
                   >
                     <i className="fa fa-trash" />
@@ -140,4 +133,4 @@ const TaskList = (props) => {
   );
 };
 
-export default TaskList;
+export default CouponList;

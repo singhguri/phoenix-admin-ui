@@ -4,9 +4,12 @@ import { authenticate, isAuthenticated } from "../auth/helper";
 import { Roles } from "../constants/constants";
 import { login } from "../services/userService";
 import Base from "./base";
+import Loading from "./loader";
 
 const Login = (props) => {
   const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [values, setValues] = useState({
     email: "",
@@ -20,7 +23,7 @@ const Login = (props) => {
 
   const performRedirect = () => {
     const user = isAuthenticated();
-    console.log(didRedirect, user, "asf");
+
     if (user) {
       console.log(user.data.role);
       switch (user.data.role) {
@@ -61,9 +64,12 @@ const Login = (props) => {
     event.preventDefault();
     setValues({ ...values, error: false, loading: true });
 
+    setIsLoading(true);
+
     await login({ email, password })
       .then((data) => {
-        console.log({ data });
+        // console.log({ data });
+        setIsLoading(false);
         if (data.data.status) {
           const res = data;
           authenticate(res.data, () => {
@@ -75,6 +81,7 @@ const Login = (props) => {
         }
       })
       .catch((err) => {
+        setIsLoading(false);
         console.log({ err });
       });
   };
@@ -134,7 +141,8 @@ const Login = (props) => {
 
   return (
     <Base title="Login" description="">
-      {loadingMessage()}
+      {/* {loadingMessage()} */}
+      <Loading isLoading={isLoading} />
       {errorMessage()}
       {signinForm()}
       {/* {performRedirect()} */}

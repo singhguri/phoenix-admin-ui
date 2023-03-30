@@ -6,25 +6,37 @@ import { getAllOAuthUserById } from "../services/userService";
 import Base from "./base";
 import { RandomPassword } from "../utils/genPassword";
 import { addAdminUser } from "../services/adminUserService";
+import Loading from "./loader";
 
 const AddUser = (props) => {
   let history = useNavigate();
   const userId = localStorage.getItem("userId");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [user, setUser] = useState({});
 
   const { register, handleSubmit, reset, setValue } = useForm();
 
   useEffect(() => {
-    console.log(userId);
-    if (userId)
+    // console.log(userId);
+    if (userId) {
+      setIsLoading(true);
       // get user from db
       getAllOAuthUserById(userId)
         .then((res) => {
           console.log({ res });
-          if (res) if (res.data.status) setUser(res.data.message);
+          if (res)
+            if (res.data.status) {
+              setUser(res.data.message);
+              setIsLoading(false);
+            }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }
   }, [userId]);
 
   useEffect(() => {
@@ -47,33 +59,20 @@ const AddUser = (props) => {
       role: event.isAdmin ? 1 : 2,
     };
 
-    console.log(body);
+    setIsLoading(true);
 
-    // if (userId) {
-    //   // update case
-    //   updateOAuthUsers(body, userId)
-    //     .then((res) => {
-    //       console.log(res);
-    //       toast.success("User updated successfully...");
-    //       history("/userList");
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       toast.error("Some error occured...");
-    //     });
-    // } else {
-    // add case
     addAdminUser(body)
       .then((res) => {
         console.log(res);
+        setIsLoading(false);
         toast.success("User added successfully...");
         history("/userList");
       })
       .catch((err) => {
+        setIsLoading(false);
         console.log(err);
         toast.error("Some error occured...");
       });
-    // }
   };
 
   const genRandomPassword = () => {
@@ -82,6 +81,7 @@ const AddUser = (props) => {
 
   return (
     <Base title="Add User" description="">
+      <Loading isLoading={isLoading} />
       <form className="w-50" onSubmit={handleSubmit(handleUserFormSubmit)}>
         <div className="form-group mt-3">
           <label htmlFor="name">Name</label>

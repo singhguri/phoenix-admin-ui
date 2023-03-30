@@ -5,9 +5,11 @@ import {
 } from "react-router-dom";
 import AdminRoute from "./auth/helper/adminRoutes";
 import ClientRoute from "./auth/helper/clientRoutes";
+import AddCoupon from "./components/addCoupon";
 import AddTask from "./components/addTask";
 import AddUser from "./components/addUser";
 import ClientDashboard from "./components/clientDashboard";
+import CouponList from "./components/couponList";
 import Dashboard from "./components/dashboard";
 import Login from "./components/login";
 import NotFound from "./components/notFound";
@@ -51,6 +53,22 @@ const Routes = () => {
               <ClientRoute>
                 <AddTask />
               </ClientRoute>
+            }
+          />
+          <Route
+            path="/couponList"
+            element={
+              <AdminRoute>
+                <CouponList />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/addCoupon"
+            element={
+              <AdminRoute>
+                <AddCoupon />
+              </AdminRoute>
             }
           />
 

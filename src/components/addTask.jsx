@@ -5,34 +5,58 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Base from "./base";
 import { isAuthenticated } from "../auth/helper";
+import Loading from "./loader";
 
 const AddTask = (props) => {
+  let history = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const user = isAuthenticated();
 
-  let history = useNavigate();
   const taskId = localStorage.getItem("taskId");
+  const taskLang = localStorage.getItem("taskLang");
 
   const [task, setTask] = useState({});
+
+  const [isBig, setIsBig] = useState(false);
 
   const { register, handleSubmit, reset, setValue } = useForm();
 
   useEffect(() => {
-    if (taskId)
+    if (taskId) {
+      setIsLoading(true);
       // get task from db
-      getTaskById(taskId)
+      getTaskById(taskId, taskLang)
         .then((res) => {
-          if (res) if (res.data.status) setTask(res.data.message);
+          if (res)
+            if (res.data.status) {
+              setTask(res.data.message);
+              setIsLoading(false);
+            }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }
   }, [taskId]);
 
   useEffect(() => {
-    setValue("taskName", task.taskName);
-    setValue("taskDescription", task.taskDesc);
-    setValue("taskTiming", task.taskTiming);
-    setValue("taskLang", task.lang);
+    if (taskId) {
+      setValue("taskName", task.taskName);
+      setValue("taskDescription", task.taskDesc);
+      setValue("taskTiming", task.taskTiming);
+      setValue("taskLang", task.lang);
 
-    if (task.taskSize === "big") setValue("isTaskBig", true);
+      if (task.taskSize === "big") {
+        setValue("isTaskBig", true);
+        // setIsBig(true);
+      }
+    } else {
+      setValue("taskLang", "en");
+      setValue("isTaskBig", false);
+    }
   });
 
   const handleTaskFormSubmit = (event) => {
@@ -41,33 +65,39 @@ const AddTask = (props) => {
       taskName: event.taskName,
       taskDesc: event.taskDescription,
       taskType: "both",
-      taskTiming: event.taskTiming,
+      taskTiming: event.taskTiming ?? 0,
       taskSize: event.isTaskBig ? "big" : "small",
       lang: event.taskLang,
       taskAddUserId: user.data.id,
     };
 
     if (taskId) {
+      setIsLoading(true);
       // update case
-      updateTask(body, taskId)
+      updateTask(body, taskId, taskLang)
         .then((res) => {
           console.log(res);
+          setIsLoading(false);
           toast.success("Task updated successfully...");
           history("/taskList");
         })
         .catch((err) => {
+          setIsLoading(false);
           console.log(err);
           toast.error("Some error occured...");
         });
     } else {
+      setIsLoading(true);
       // add case
       addTask(body)
         .then((res) => {
           console.log(res);
+          setIsLoading(false);
           toast.success("Task added successfully...");
           history("/taskList");
         })
         .catch((err) => {
+          setIsLoading(false);
           console.log(err);
           toast.error("Some error occured...");
         });
@@ -80,7 +110,8 @@ const AddTask = (props) => {
   };
 
   return (
-    <Base title="Add Task" description="">
+    <Base title={taskId ? "Edit Task" : "Add Task"} description="">
+      <Loading isLoading={isLoading} />
       <form className="w-50" onSubmit={handleSubmit(handleTaskFormSubmit)}>
         <div className="form-group mt-3">
           <label htmlFor="taskName">Task Name</label>
@@ -91,6 +122,7 @@ const AddTask = (props) => {
             name="taskName"
             placeholder="Task Name"
             {...register("taskName")}
+            disabled={taskId}
           />
         </div>
         <div className="form-group mt-3">
@@ -113,39 +145,9 @@ const AddTask = (props) => {
             name="taskTiming"
             placeholder="Duration"
             {...register("taskTiming")}
+            disabled={isBig}
           />
         </div>
-        {/* <div className="form-group mt-3">
-          <label>Task type</label>
-          <div className="d-flex">
-            <div className="form-check form-switch me-2">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="isOnline"
-                name="isOnline"
-                {...register("isOnline")}
-              />
-              <label className="form-check-label" htmlFor="isOnline">
-                Online
-              </label>
-            </div>
-            <div className="form-check form-switch">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="isOffline"
-                name="isOffline"
-                {...register("isOffline")}
-              />
-              <label className="form-check-label" htmlFor="isOffline">
-                Offline
-              </label>
-            </div>
-          </div>
-        </div> */}
         <div className="form-group mt-3">
           <label>Task Size</label>
           <div className="d-flex">
@@ -157,6 +159,7 @@ const AddTask = (props) => {
                 id="isTaskBig"
                 name="isTaskBig"
                 {...register("isTaskBig")}
+                onChange={() => setIsBig(!isBig)}
               />
               <label className="form-check-label" htmlFor="isTaskBig">
                 Big
@@ -164,7 +167,7 @@ const AddTask = (props) => {
             </div>
           </div>
         </div>
-        <div className="form-group mt-3">
+        <div className={`form-group mt-3 ${taskId ? "d-none" : ""}`}>
           <label>Task Language</label>
           <div className="d-flex">
             <select
@@ -178,22 +181,6 @@ const AddTask = (props) => {
               <option value="en">English</option>
               <option value="fr">French</option>
             </select>
-            {/* <div className="form-check form-switch me-2">
-              <label className="form-check-label" htmlFor="taskLang">
-                English
-              </label>
-              <input
-                className="form-check-input"
-                type="checkbox"
-                role="switch"
-                id="taskLang"
-                name="taskLang"
-                {...register("taskLang")}
-              />
-              <label className="form-check-label" htmlFor="taskLang">
-                French
-              </label>
-            </div> */}
           </div>
         </div>
         <div className="d-flex col-6 mt-3">

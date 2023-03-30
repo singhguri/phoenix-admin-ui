@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteOAuthUsers } from "../services/userService";
 import { toast } from "react-toastify";
 import Base from "./base";
 import {
@@ -9,15 +8,19 @@ import {
 } from "../services/adminUserService";
 import { isAuthenticated } from "../auth/helper";
 import { Roles } from "../constants/constants";
+import Loading from "./loader";
 
 const UserList = (props) => {
   let history = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [users, setUsers] = useState([]);
 
   const user = isAuthenticated();
 
   useEffect(() => {
     if (!user || user.data.role !== Roles.ADMIN) history("/");
+    setIsLoading(true);
 
     getAllAdminUsers()
       .then((res) => {
@@ -25,6 +28,7 @@ const UserList = (props) => {
         if (res)
           if (res.data.status) {
             setUsers(res.data.message);
+            setIsLoading(false);
           }
       })
       .catch((err) => console.log(err));
@@ -53,6 +57,7 @@ const UserList = (props) => {
 
   return (
     <Base title="Users" description="">
+      <Loading isLoading={isLoading} />
       <div className="d-flex justify-content-between align-items-center">
         <button
           onClick={handleNavigate}
@@ -106,7 +111,9 @@ const UserList = (props) => {
                   </button>
                   <button
                     onClick={() => handleDelete(user.id)}
-                    className="btn btn-danger me-2"
+                    className={`btn btn-danger me-2 ${
+                      user.id === "1" ? "d-none" : ""
+                    }`}
                   >
                     <i className="fa fa-trash"></i>
                   </button>

@@ -25,9 +25,9 @@ export const addTask = async (body) => {
   }
 };
 
-export const updateTask = async (body, id) => {
+export const updateTask = async (body, id, taskLang) => {
   try {
-    if (body.lang === "en")
+    if (taskLang === "en")
       return await axios.put(BASE_URL + "/tasks/" + id, body);
     return await axios.put(BASE_URL + "/fr-tasks/" + id, body);
   } catch (error) {
@@ -51,14 +51,11 @@ export const deleteFrTaskById = async (id) => {
   }
 };
 
-export const getTaskById = async (id) => {
+export const getTaskById = async (id, lang) => {
   try {
-    let task = await axios.get(BASE_URL + "/tasks/" + id);
+    if (lang === "en") return await axios.get(BASE_URL + "/tasks/" + id);
 
-    if (!task.data.message)
-      task = await axios.get(BASE_URL + "/fr-tasks/" + id);
-
-    return task;
+    return await axios.get(BASE_URL + "/fr-tasks/" + id);
   } catch (error) {
     console.log(error);
   }

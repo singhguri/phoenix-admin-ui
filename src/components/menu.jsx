@@ -63,6 +63,15 @@ const Menu = () => {
                 Tasks
               </Link>
             </li>
+            <li className="nav-item">
+              <Link
+                style={currentTab(history, "/couponList")}
+                className="nav-link"
+                to="/couponList"
+              >
+                Coupons
+              </Link>
+            </li>
           </Fragment>
         )}
 
