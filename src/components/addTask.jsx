@@ -60,12 +60,12 @@ const AddTask = (props) => {
   });
 
   const handleTaskFormSubmit = (event) => {
-    // console.log(event);
+    console.log(event);
     let body = {
       taskName: event.taskName,
       taskDesc: event.taskDescription,
       taskType: "both",
-      taskTiming: event.taskTiming ?? 0,
+      taskTiming: event.taskTiming === "" ? 0 : event.taskTiming,
       taskSize: event.isTaskBig ? "big" : "small",
       lang: event.taskLang,
       taskAddUserId: user.data.id,
