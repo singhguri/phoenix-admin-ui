@@ -9,9 +9,12 @@ export const getAllCoupons = async () => {
   }
 };
 
-export const deleteCoupon = async (id) => {
+export const deleteCoupon = async (id, lang) => {
   try {
-    return await axios.delete(BASE_URL + "/coupon/" + id);
+    return await axios.post(BASE_URL + "/coupon/delete", {
+      couponId: id,
+      couponLang: lang,
+    });
   } catch (error) {
     console.log(error);
   }
