@@ -39,7 +39,7 @@ const Login = (props) => {
       }
     }
 
-    if (isAuthenticated()) navigate("/");
+    // if (isAuthenticated()) navigate("/");
   };
 
   const loadingMessage = () => {
