@@ -56,7 +56,7 @@ const AddUser = (props) => {
       password: event.password,
       isAdminUser: true,
       verified_email: true,
-      role: event.isAdmin ? 1 : 2,
+      role: 2,
     };
 
     setIsLoading(true);
@@ -125,7 +125,7 @@ const AddUser = (props) => {
             </div>
           </div>
         </div>
-        <div className="form-group mt-3">
+        {/* <div className="form-group mt-3">
           <label>User Role</label>
           <div className="d-flex">
             <div className="form-check form-switch me-2">
@@ -142,7 +142,7 @@ const AddUser = (props) => {
               </label>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* <div className="form-group mt-3">
           <label>User Size</label>
           <div className="d-flex">
