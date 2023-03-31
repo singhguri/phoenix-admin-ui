@@ -105,13 +105,13 @@ const UserList = (props) => {
                   <button
                     style={{ display: "none" }}
                     onClick={() => handleEdit(user.id)}
-                    className="btn btn-primary me-2"
+                    className="btn btn-primary btn-sm me-2"
                   >
                     <i className="fa fa-edit"></i>
                   </button>
                   <button
                     onClick={() => handleDelete(user.id)}
-                    className={`btn btn-danger me-2 ${
+                    className={`btn btn-danger btn-sm me-2 ${
                       user.id === "1" ? "d-none" : ""
                     }`}
                   >
